@@ -17,7 +17,7 @@ app = FastAPI(title="Blue Cross RAG Backend API", version="1.0")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-            "https://travel-insurance-rag-chat-frontend.vercel.app/"
+            "https://travel-insurance-rag-chat-frontend.vercel.app"
         ],
     allow_credentials=True,
     allow_methods=["*"],
