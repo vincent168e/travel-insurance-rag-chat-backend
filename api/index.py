@@ -1,3 +1,9 @@
+import sys
+from pathlib import Path
+
+project_root = Path(__file__).resolve().parent.parent
+sys.path.append(str(project_root))
+
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from langchain_core.messages import HumanMessage
