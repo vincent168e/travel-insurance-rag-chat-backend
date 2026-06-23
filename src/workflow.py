@@ -1,3 +1,4 @@
+import time
 from typing import Annotated, TypedDict, Sequence
 from langchain_core.messages import BaseMessage, HumanMessage, AIMessage
 from langgraph.graph import StateGraph, START, END
@@ -21,6 +22,9 @@ class AgentState(TypedDict):
 # Initialize Model
 llm = ChatGoogleGenerativeAI(model="gemini-3.1-flash-lite", google_api_key=settings.GEMINI_API_KEY)
 
+OUT_OF_SCOPE_FALLBACK_MESSAGE = "That's a bit outside what I can help with. Could we focus on your travel insurance policy instead?"
+NO_REFERENCE_FALLBACK_MESSAGE = "I don't have that info right now, but I'm here to help with anything else."
+
 # --- HELPER FUNCTION FOR STRIP/LIST SAFETY ---
 def extract_text_content(content) -> str:
     """Safely extracts a string from LangChain message contents regardless of SDK version variations."""
@@ -41,7 +45,12 @@ def extract_text_content(content) -> str:
 def guardrail_node(state: AgentState):
     last_message = state["messages"][-1].content
     if check_guardrails(last_message):
-        return {"final_response": "please ask questions related to travel insurance policy"}
+        time.sleep(1)  # Simulate processing delay
+        fallback_msg = OUT_OF_SCOPE_FALLBACK_MESSAGE
+        return {
+            "final_response": fallback_msg,
+            "messages": [AIMessage(content=fallback_msg)]
+        }
     return {"final_response": ""}
 
 def retrieve_and_scope_node(state: AgentState):
@@ -56,7 +65,11 @@ def retrieve_and_scope_node(state: AgentState):
     
     # Check similarity threshold (Example: 0.40 cutoff)
     if max_score < 0.40:
-        return {"final_response": "sorry, no related information can be provided"}
+        fallback_msg = NO_REFERENCE_FALLBACK_MESSAGE
+        return {
+            "final_response": fallback_msg,
+            "messages": [AIMessage(content=fallback_msg)]
+        }
         
     context_str = "\n\n".join(docs)
     
@@ -72,7 +85,11 @@ def retrieve_and_scope_node(state: AgentState):
     scope_check = extract_text_content(raw_response.content).strip().upper()
     
     if "NO" in scope_check:
-        return {"final_response": "That's a bit outside what I can help with. Could we focus on your travel insurance policy instead?"}
+        fallback_msg = OUT_OF_SCOPE_FALLBACK_MESSAGE
+        return {
+            "final_response": fallback_msg,
+            "messages": [AIMessage(content=fallback_msg)]
+        }
         
     return {"context": context_str}
 
@@ -84,13 +101,14 @@ def generate_node(state: AgentState):
     context = state["context"]
     
     system_prompt = (
-        "You are a professional, warm, and friendly customer service agent for Blue Cross Travel Insurance.\n"
-        "Your tone should be welcoming, empathetic, polite, and reassuring, ensuring the customer feels supported.\n\n"
-        "CRITICAL RULES:\n"
-        "1. Answer the user's question accurately using ONLY the provided policy context below.\n"
-        "2. Do not use outside knowledge or extrapolate. Keep the information factually tied to the context.\n"
-        "3. If you cannot answer using the context, disregard your warm persona rules and state exactly: "
-        "'I don't have that info right now, but I'm here to help with anything else.'\n\n"
+        "You are a professional and helpful customer service agent for Blue Cross Travel Insurance. Do not show greetings.\n\n"
+        "CRITICAL EXECUTION INSTRUCTIONS:\n"
+        "1. Identify and answer ONLY the single latest question asked by the user at the very end of the dialogue tracking.\n"
+        "2. Treat the previous message history strictly as a silent reference archive to resolve pronouns (e.g., 'it', 'that') "
+        "or lookup requests (e.g., 'my first question'). Do NOT list out, summarize, or re-answer those past exchanges.\n"
+        "3. Provide your answer in a natural, friendly, conversational way, limited strictly to 2 or 3 sentences maximum.\n"
+        "4. Rely completely on the provided policy context below. If it cannot be answered, state exactly: "
+        f"{NO_REFERENCE_FALLBACK_MESSAGE}\n\n"
         f"Context:\n{context}"
     )
     
