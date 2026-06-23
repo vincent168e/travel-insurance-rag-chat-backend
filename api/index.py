@@ -10,7 +10,9 @@ app = FastAPI(title="Blue Cross RAG Backend API", version="1.0")
 # Enable CORS for React frontend hosting
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # Tighten in production
+    allow_origins=[
+            "https://travel-insurance-rag-chat-frontend.vercel.app/"
+        ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
