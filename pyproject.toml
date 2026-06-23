@@ -15,5 +15,4 @@ dependencies = [
     "python-dotenv>=1.0.1",
     "pypdf>=4.1.0",
     "langchain-community>=0.4.2",
-    "logging>=0.4.9.6",
 ]
