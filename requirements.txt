@@ -488,9 +488,6 @@ langsmith==0.9.0 \
     #   langchain-classic
     #   langchain-community
     #   langchain-core
-logging==0.4.9.6 \
-    --hash=sha256:26f6b50773f085042d301085bd1bf5d9f3735704db9f37c1ce6d8b85c38f2417
-    # via travel-insurance-rag-chat-backend
 msgspec==0.21.1 \
     --hash=sha256:0d03867786e5d7ba25d666df4b11320c27170f4aeafcb8e3a8b0a50a4fb742ca \
     --hash=sha256:0d2cc73df6058d811a126ac3a8ad63a4dfa210c82f9cf5a004802eaf4712de90 \
