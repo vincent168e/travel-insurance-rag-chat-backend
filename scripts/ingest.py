@@ -1,19 +1,20 @@
 import sys
+import urllib.request
 from pathlib import Path
+from pinecone import Pinecone, ServerlessSpec
+
+from langchain_community.document_loaders import PyPDFLoader
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 project_root = Path(__file__).resolve().parent.parent
 sys.path.append(str(project_root))
-
-import urllib.request
-from langchain_community.document_loaders import PyPDFLoader
-from langchain_text_splitters import RecursiveCharacterTextSplitter
-from pinecone import Pinecone, ServerlessSpec
 
 from src.config import settings
 from src.database import embeddings
 
 PDF_URL = "https://qc.bluecross.ca/en/dam/jcr:7db443db-b794-4de0-aa1f-a849a941d89f/travel_insurance_policy_11QVV0196A_2022-10.pdf"
 LOCAL_PDF_PATH = "public/blue_cross_policy.pdf"
+POLICY_TIER = "Single-trip solutions Canada package"
 
 def run_ingestion():
     # 1. Initialize Pinecone Index if it doesn't exist
@@ -48,7 +49,8 @@ def run_ingestion():
         vector = embeddings.embed_query(chunk.page_content)
         metadata = {
             "text": chunk.page_content,
-            "page": chunk.metadata.get("page", 0)
+            "page": chunk.metadata.get("page", 0),
+            "policy_tier": POLICY_TIER,
         }
         index.upsert(vectors=[(f"doc_chunk_{i}", vector, metadata)])
         

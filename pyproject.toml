@@ -15,4 +15,6 @@ dependencies = [
     "python-dotenv>=1.0.1",
     "pypdf>=4.1.0",
     "langchain-community>=0.4.2",
+    "cloudinary>=1.44.2",
+    "python-multipart>=0.0.32",
 ]

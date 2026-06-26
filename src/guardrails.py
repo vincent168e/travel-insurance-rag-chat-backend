@@ -1,6 +1,13 @@
 import re
 
 COMPETITORS = ["manulife", "caa", "allianz", "sun life", "desjardins", "td insurance", "tugo"]
+EMERGENCY_KEYWORDS = [
+    "death",
+    "dismemberment",
+    "eye",
+    "limb",
+    "urgent help",
+]
 
 def check_guardrails(user_input: str) -> bool:
     """
@@ -27,3 +34,9 @@ def check_guardrails(user_input: str) -> bool:
             return True
             
     return False
+
+
+def detect_emergency(user_input: str) -> bool:
+    """Returns True when emergency intent should trigger live-agent escalation."""
+    text_lower = user_input.lower()
+    return any(keyword in text_lower for keyword in EMERGENCY_KEYWORDS)
