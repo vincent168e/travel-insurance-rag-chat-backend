@@ -4,7 +4,7 @@ from fastapi import FastAPI, HTTPException, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from langchain_core.messages import HumanMessage
 
-from src.models import ChatRequest, ChatResponse
+from src.schemas import ChatRequest, ChatResponse
 from src.graph.workflow import app_graph
 from src.config import settings
 from src.services.img_storage import upload_multiple_files_to_cloudinary

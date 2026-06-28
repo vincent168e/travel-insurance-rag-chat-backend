@@ -5,7 +5,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from src.graph.state import AgentState
 from src.config import settings
 from src.messages import MESSAGES
-from src.database import query_policy_chunks
+from src.database.pinecone_client import query_policy_chunks
 from src.utils.helpers import log_node_start, log_node_end, log_event, normalize_user_text, extract_text_content
 
 

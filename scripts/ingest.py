@@ -10,7 +10,7 @@ project_root = Path(__file__).resolve().parent.parent
 sys.path.append(str(project_root))
 
 from src.config import settings
-from src.database import embeddings
+from src.database.pinecone_client import embeddings
 
 PDF_URL = "https://qc.bluecross.ca/en/dam/jcr:7db443db-b794-4de0-aa1f-a849a941d89f/travel_insurance_policy_11QVV0196A_2022-10.pdf"
 LOCAL_PDF_PATH = "public/blue_cross_policy.pdf"
