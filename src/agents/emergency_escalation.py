@@ -4,7 +4,8 @@ from langchain_core.messages import AIMessage
 
 from src.graph.state import AgentState
 from src.config import settings
-from src.messages import MESSAGES,EMERGENCY_KEYWORDS
+from src.messages import MESSAGES
+from src.constants import EMERGENCY_KEYWORDS
 from src.utils.helpers import log_node_start, log_node_end, log_event, normalize_user_text
 
 
