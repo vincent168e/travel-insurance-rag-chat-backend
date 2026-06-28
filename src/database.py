@@ -1,12 +1,6 @@
-import sys
 import logging
-from pathlib import Path
 from pinecone import Pinecone
-
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
-
-project_root = Path(__file__).resolve().parent.parent
-sys.path.append(str(project_root))
 
 from src.config import settings
 
